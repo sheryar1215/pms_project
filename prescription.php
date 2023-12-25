@@ -467,6 +467,6 @@ include "common_services/common_functions.php";
         i++;
       });
     }
-  </script>x
+  </script>
 </body>
 </html>
