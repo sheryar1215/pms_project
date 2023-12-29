@@ -1,6 +1,5 @@
 <?php 
 include 'fpdf/our_awesome_pdf.php';
-
 include 'config/connection.php';
 
 $pdf = new OurAwesomePdf('P', true, 'All Tests', date('Y-m-d'), date('Y-m-d'), true, 'Demo');

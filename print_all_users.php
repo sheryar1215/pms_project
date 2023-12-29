@@ -1,58 +1,30 @@
 <?php 
-	include 'fpdf/fpdf.php';
+include "fpdf/our_awesome_pdf.php";
+include "config/connection.php";
 
-	include 'config/connection.php';
-
-$pdf = new FPDF();
+$pdf = new OurAwesomePdf('p',true,'All Users','Generate Users Reoprts');
+$pdf->AliasNbPages();
 $pdf->AddPage();
-$pdf->SetFont('Arial','B',18);
 
-$pdf->cell(0, 10, 'All Users Report' , 1, 1, 'c' );
+$pdf->SetWidths([10,30,30,30,50,30]);
+$pdf->addTableHeader(['S.No','full Name','user Name','Rank','Email','Status']);
 
-$pdf->SetFont('Arial','B', 14);
-
-$pdf->setFillColor(0,0,0);
-$pdf->setTextColor(255,255,255);
-
-$pdf->ln();
-
-$pdf->cell(20, 10, 'S.No', 1, 0, 'L', 1);
-$pdf->cell(40, 10, 'Full Name', 1, 0, 'L', 1);
-$pdf->cell(30, 10, 'Username', 1, 0, 'L', 1);
-$pdf->cell(70, 10, 'Email', 1, 0, 'L', 1);
-$pdf->cell(30, 10, 'Status', 1, 1, 'L', 1);
-
-
-$query = "select * from users";
+$query = "select u.* , ut.`type` from users as u , user_types as ut 
+where u.`user_type_id` = ut.`id`";
 $stmt = $con->prepare($query);
 $stmt->execute();
 
-$pdf->setTextColor(0,0,0);
-$pdf->setFillColor(255,255,255);
-
-$pdf->SetFont('Arial','', 12);
-
-$i = 0;
-$status = "";
-while($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-	$i++;
-
-	if($row['is_active'] == 1) {
-		$status = "Active";
-	} else {
-		$status = "De Active";
+$count = 0;
+while($row=$stmt->fetch(PDO::FETCH_ASSOC)){
+	$count++;
+	$status = "Active";
+	if($row['is_active']==0){
+		$status = "Blocked";
 	}
-
-	$pdf->cell(20, 10, $i, 1, 0, 'L', 1);
-	$pdf->cell(40, 10, $row['full_name'], 1, 0, 'L', 1);
-	$pdf->cell(30, 10, $row['user_name'], 1, 0, 'L', 1);
-	$pdf->cell(70, 10, $row['email'], 1, 0, 'L', 1);
-	$pdf->cell(30, 10, $status, 1, 1, 'L', 1);
-
+	$pdf->AddRow([$count,$row['full_name'],$row['user_name'],$row['type'],$row['email'],$status]);
 }
 
 
-$pdf->Output();
+$pdf->output();
 
-
- ?>
+?>
