@@ -39,6 +39,8 @@ include "common_services/common_functions.php";
         $stmtInsertPatientVisits->execute();
 
         $patientVisitId = $con->lastInsertId();
+        $_SESSION['patient_visit_id'] = $patientVisitId;
+
 
         //inserting rows in patient visits medications table..
         foreach ($medicineDetailIds as $index => $medicineDetailsId) {
@@ -342,6 +344,21 @@ include "common_services/common_functions.php";
   <!-- ./wrapper -->
 
   <?php include 'config/site_js.php'; ?>
+
+
+  <?php
+    if(isset($_SESSION['patient_visit_id'])) {
+  ?>
+
+<script>
+  var patientVisitId = "<?php echo $_SESSION['patient_visit_id']; ?>";
+
+  window.open('print_prescription?patient_visit_id='+patientVisitId, '_blank');
+</script>
+<?php } ?>
+
+
+
   <script>
     $(document).ready(function() {
       $("#Prescriptions_link").addClass('active');
